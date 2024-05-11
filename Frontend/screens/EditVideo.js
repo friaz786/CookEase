@@ -67,14 +67,15 @@ const EditVideo = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Back Icon */}
-      <TouchableOpacity
-        style={styles.backIcon}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="chevron-back" size={30} color="#000" />
-      </TouchableOpacity>
+    <View contentContainerStyle={styles.container}>
+      <View style={styles.customHeader}>
+        <TouchableOpacity
+          style={styles.backIcon}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back" size={30} color="#000" />
+        </TouchableOpacity>
+      </View>
       <TextInput
         style={styles.input}
         value={caption}
@@ -96,9 +97,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 20,
+    padding: 10,
     alignItems: "center",
     backgroundColor: "white",
+  },
+  backIcon: {
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
+  },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
   },
   input: {
     flexDirection: "row",
@@ -108,12 +124,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 15,
+    marginTop: 50,
+    marginHorizontal: "5%",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    backgroundColor: "white",
-    shadowColor: "black",
-    shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   button: {
     backgroundColor: "#4CAF50",
@@ -122,6 +143,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginBottom: "7%",
+    marginHorizontal: "30%",
     marginTop: "7%",
     shadowColor: "black",
     shadowOffset: { width: 1, height: 3 },
@@ -139,6 +161,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginBottom: "7%",
+    marginHorizontal: "30%",
     shadowColor: "black",
     shadowOffset: { width: 1, height: 3 },
     shadowOpacity: 0.25,
@@ -147,12 +170,6 @@ const styles = StyleSheet.create({
   deletebuttonText: {
     color: "#fff",
     fontSize: 17,
-  },
-  backIcon: {
-    position: "absolute",
-    top: 45, // Adjust top and left as per the design requirements
-    left: 10,
-    zIndex: 10,
   },
 });
 export default EditVideo;

@@ -43,13 +43,16 @@ const CalendarScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity
-        style={styles.backIcon}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="chevron-back" size={30} color="#000" />
-      </TouchableOpacity>
+    <View style={styles.container}>
+     <View style={styles.customHeader}>
+        <TouchableOpacity
+          style={styles.backIcon}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back" size={30} color="#000" />
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: "flex-end" }}></View>
+      </View>
       <Text style={styles.title}>Select date for Meal Plan</Text>
       <Calendar
         onDayPress={onDayPress}
@@ -75,47 +78,75 @@ const CalendarScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Create Meal Plan</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    backgroundColor: "#f9f9f9",
+    //justifyContent: "center",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: -60,
-    marginBottom: 10,
+    marginTop: '5%',
     color: "#212121",
+    //alignSelf: 'center',
   },
   backIcon: {
-    position: "absolute",
-    top: 40,
-    left: 20,
-    //marginTop: "-30%",
-    
-  },
-  buttonContainer: {
-    width: "100%", // Take the full width of the container
-    alignItems: "center", // Center-align the button horizontally
-  },
-  button: {
-    backgroundColor: "#4CAF50",
-    width: "80%",
     padding: 10,
-    borderRadius: 10,
-    alignItems: "center",
     marginTop: 20,
+    marginLeft: 1,
+  },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
+  },
+  input: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "95%",
+    borderColor: "white",
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: "3%",
+    marginTop: "2%",
+    borderRadius: 10,
+    backgroundColor: "white",
     shadowColor: "black",
     shadowOffset: { width: 1, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    marginHorizontal: "10%",
+    alignSelf: 'center',
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    marginLeft: 10,
+    marginTop: 10,
+    padding: 10,
+  },
+  backButtonText: {
+    color: "#007AFF",
+    fontSize: 18,
+  },
+  button: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 20,
   },
   buttonText: {
+    textAlign: "center",
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "500",

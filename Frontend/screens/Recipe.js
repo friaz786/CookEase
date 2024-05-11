@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
   TextInput, // Added import
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -121,6 +122,10 @@ const Recipe = ({ route, navigation }) => {
         </TouchableOpacity>
         <View style={{ flex: 1, alignItems: "flex-end" }}></View>
       </View>
+      <Image 
+    source={{ uri: recipe.image_url }}  // Ensure you use the correct property name for the URL
+    style={styles.image}  // You might want to define the style for your images
+  />
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Recipe Name</Text>
         <Text style={styles.cardContent}>{recipe.name}</Text>
@@ -261,6 +266,22 @@ const styles = StyleSheet.create({
   timerButtonText: {
     color: "#ffffff",
     fontWeight: "bold",
+  },
+  image: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    alignItems: 'center',
+    justifycontent: 'center',
+    backgroundColor: "white",
+    height: 300, 
   },
 });
 export default Recipe;

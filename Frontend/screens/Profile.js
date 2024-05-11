@@ -317,6 +317,7 @@ const Profile = ({ navigation }) => {
                       style={styles.image}
                       useNativeControls
                       resizeMode="contain"
+                      isLooping
                     />
                   ) : (
                     <Image source={{ uri: item.image }} style={styles.image} />

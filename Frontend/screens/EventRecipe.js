@@ -6,6 +6,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Ionicons } from "@expo/vector-icons";
@@ -74,41 +75,46 @@ const EventRecipe = ({ route, navigation }) => {
       : undefined;
   }, [sound]);
 
+  const renderListItem = (item, index) => (
+    <View key={index} style={styles.listItem}>
+      <Text style={styles.listItemText}>• {item}</Text>
+    </View>
+  );
+
+
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.customHeader}>
       <TouchableOpacity
         style={styles.backIcon}
         onPress={() => navigation.goBack()}
       >
         <Ionicons name="chevron-back" size={30} color="#000" />
       </TouchableOpacity>
+      <View style={{ flex: 1, alignItems: "flex-end" }}></View>
+      </View>
 
+      <Image 
+    source={{ uri: recipe.image_url }}  // Ensure you use the correct property name for the URL
+    style={styles.image}  // You might want to define the style for your images
+  />
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Recipe Name: </Text>
-        <Text style={styles.recipeTitle}>{recipe.recipe}</Text>
+        <Text style={styles.cardTitle}>Recipe Name </Text>
+        <Text style={styles.cardContent}>{recipe.recipe}</Text>
         {/* <Text style={styles.cardContent}>
           Calorie count: {recipe.calorie_count} cal
         </Text> */}
       </View>
-
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Ingredients</Text>
-        {recipe.ingredients.map((ingredient, index) => (
-          <Text key={index} style={styles.ingredientText}>
-            - {ingredient}
-          </Text>
-        ))}
+        <Text style={styles.cardTitle}>Ingredients</Text>
+        {recipe.ingredients.map(renderListItem)}
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Steps</Text>
-        {recipe.steps.map((step, index) => (
-          <Text key={index} style={styles.stepText}>
-            {index + 1}. {step}
-          </Text>
-        ))}
+        <Text style={styles.cardTitle}>Steps</Text>
+        {recipe.steps.map(renderListItem)}
       </View>
-      <Text style={styles.timerText}>Set Timer</Text>
+
       <View style={styles.timerContainer}>
         <TextInput
           style={styles.timerInput}
@@ -151,73 +157,78 @@ const EventRecipe = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "white",
+    backgroundColor: "#F7F7F7",
   },
   backIcon: {
-    zIndex: 10,
-    marginTop: "5%",
-    marginBottom: "2%",
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
+  },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
   },
   card: {
-    backgroundColor: "lightgrey", // Light grey background for the card
-    borderRadius: 8, // Rounded corners for the card
-    padding: 20, // Padding inside the card
-    marginBottom: 5, // Space between cards
-    shadowColor: "#000", // Shadow color
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4, // Elevation for Android
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    padding: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  recipeTitle: {
-    fontSize: 20,
-    marginBottom: 10,
-    color: "#000",
-  },
-  sectionTitle: {
-    fontSize: 20,
+  cardTitle: {
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
-    color: "grey",
+    color: "#4CAF50",
   },
-  ingredientText: {
-    fontSize: 18,
-    marginLeft: 10,
-    marginBottom: 5,
+  cardContent: {
+    fontSize: 16,
+    marginTop: 8,
+    color: "#666666",
   },
-  stepText: {
-    fontSize: 18,
-    marginLeft: 10,
-    marginBottom: 5,
+  listItem: {
+    marginTop: 8,
+  },
+  listItemText: {
+    fontSize: 16,
+    color: "#666",
   },
   timerContainer: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
     marginVertical: 20,
-    width: "87%",
-    marginLeft: "7%",
-    marginRight: "7%",
-    marginBottom: "15%",
-  },
-  timerText: {
-    marginTop: "6%",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginLeft: "7%",
+    padding: 10,
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    marginHorizontal: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   timerInput: {
     borderWidth: 1,
     borderColor: "#cccccc",
     borderRadius: 5,
-    marginRight: 10,
     padding: 10,
     width: "25%",
-    alignItems: "center",
+    textAlign: "center",
+    backgroundColor: "#F5F5F5",
   },
   timerButton: {
     backgroundColor: "#4CAF50",
@@ -226,6 +237,23 @@ const styles = StyleSheet.create({
   },
   timerButtonText: {
     color: "#ffffff",
+    fontWeight: "bold",
+  },
+  image: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    alignItems: 'center',
+    justifycontent: 'center',
+    backgroundColor: "white",
+    height: 300, 
   },
 });
 

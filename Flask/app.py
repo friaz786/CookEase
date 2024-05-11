@@ -156,4 +156,4 @@ def detect_fruits_vegetables():
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.1.65', port=5000, debug=True)
+    app.run(host='172.20.5.193', port=5000, debug=True)

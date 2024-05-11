@@ -15,7 +15,6 @@ import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import Icon from "react-native-vector-icons/Ionicons";
 import { Ionicons } from "@expo/vector-icons";
 
 const MeetingDetail = ({ navigation }) => {
@@ -32,13 +31,18 @@ const MeetingDetail = ({ navigation }) => {
       Alert.alert("Error", "Please fill all the fields.");
       return;
     }
-  
+
     const meetingLink = await createDailyCoMeeting(); // Create the meeting room and get the link
     if (!meetingLink) return; // Stop if the meeting room wasn't created successfully
-  
+
     try {
-      const meetingsColRef = collection(db, "meeting", currentUser.uid, "meetings");
-  
+      const meetingsColRef = collection(
+        db,
+        "meeting",
+        currentUser.uid,
+        "meetings"
+      );
+
       const meetingRef = await addDoc(meetingsColRef, {
         host: currentUser.uid,
         meetingName,
@@ -46,9 +50,9 @@ const MeetingDetail = ({ navigation }) => {
         meetingTime,
         meetingLink, // Use the generated link
         payee: [],
-        status: "not_started"
+        status: "not_started",
       });
-  
+
       Alert.alert("Success", "Meeting details saved successfully.");
       navigation.goBack();
     } catch (error) {
@@ -56,18 +60,18 @@ const MeetingDetail = ({ navigation }) => {
       Alert.alert("Error", "Could not save meeting details.");
     }
   };
-  
+
   async function createDailyCoMeeting() {
     try {
-      const response = await fetch('http://192.168.1.65:8080/create-room', {
-        method: 'POST',
+      const response = await fetch("http://172.20.5.193:8080/create-room", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error('Network response was not ok.');
+        throw new Error("Network response was not ok.");
       }
       return data.url; // assuming your backend returns { url: "meeting URL here" }
     } catch (error) {
@@ -76,9 +80,6 @@ const MeetingDetail = ({ navigation }) => {
       return null; // handle error appropriately
     }
   }
-  
-  
-  
 
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || meetingDate;
@@ -87,60 +88,60 @@ const MeetingDetail = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Back Icon */}
+    <View contentContainerStyle={styles.container}>
+      <View style={styles.customHeader}>
         <TouchableOpacity
           style={styles.backIcon}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="chevron-back" size={30} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Enter Meeting Details</Text>
+      </View>
+      <Text style={styles.headerText}>Enter Meeting Details</Text>
 
-        <Text style={styles.label}>Meeting Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={meetingName}
-          onChangeText={setMeetingName}
-          placeholder="e.g., Weekly Stand-up"
+      <Text style={styles.label}>Meeting Name:</Text>
+      <TextInput
+        style={styles.input}
+        value={meetingName}
+        onChangeText={setMeetingName}
+        placeholder="e.g., Weekly Stand-up"
+      />
+
+      <Text style={styles.label}>Meeting Date:</Text>
+      <TouchableOpacity
+        style={styles.input}
+        onPress={() => setShowDatePicker(true)}
+      >
+        <Text style={styles.inputText}>{meetingDate.toDateString()}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={meetingDate}
+          mode={"date"}
+          is24Hour={true}
+          display="default"
+          onChange={onChangeDate}
+          minimumDate={new Date()}
         />
+      )}
 
-        <Text style={styles.label}>Meeting Date:</Text>
-        <TouchableOpacity
-          style={styles.input}
-          onPress={() => setShowDatePicker(true)}
+      <Text style={styles.label}>Meeting Time:</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={meetingTime}
+          style={styles.picker}
+          onValueChange={(itemValue, itemIndex) => setMeetingTime(itemValue)}
+          mode="dropdown"
         >
-          <Text style={styles.inputText}>{meetingDate.toDateString()}</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={meetingDate}
-            mode={"date"}
-            is24Hour={true}
-            display="default"
-            onChange={onChangeDate}
-            minimumDate={new Date()}
-          />
-        )}
+          {Array.from({ length: 24 }, (_, i) => (
+            <Picker.Item key={i} label={`${i}:00`} value={`${i}:00`} />
+          ))}
+        </Picker>
+      </View>
 
-        <Text style={styles.label}>Meeting Time:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={meetingTime}
-            style={styles.picker}
-            onValueChange={(itemValue, itemIndex) => setMeetingTime(itemValue)}
-            mode="dropdown"
-          >
-            {Array.from({ length: 24 }, (_, i) => (
-              <Picker.Item key={i} label={`${i}:00`} value={`${i}:00`} />
-            ))}
-          </Picker>
-        </View>
-
-        {/* Meeting Link */}
-        {/* <Text style={styles.label}>Meeting Link:</Text>
+      {/* Meeting Link */}
+      {/* <Text style={styles.label}>Meeting Link:</Text>
         <TextInput
           style={styles.input}
           value={meetingLink}
@@ -148,14 +149,13 @@ const MeetingDetail = ({ navigation }) => {
           placeholder="https://"
         /> */}
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSaveMeetingDetails}
-        >
-          <Text style={styles.buttonText}>Save Meeting Details</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSaveMeetingDetails}
+      >
+        <Text style={styles.buttonText}>Save Meeting Details</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -166,9 +166,24 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     padding: 20,
   },
+  backIcon: {
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
+  },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
+  },
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
+    marginTop: "4%",
     marginBottom: 20,
     alignSelf: "center",
   },
@@ -185,12 +200,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 15,
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    backgroundColor: "white",
-    shadowColor: "black",
-    shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   inputText: {
     fontSize: 16,
@@ -213,6 +231,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: "7%",
     marginTop: 5,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonText: {
     color: "#fff",

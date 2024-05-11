@@ -8,7 +8,7 @@ import HealthForm from "./HealthForm";
 import MyMealPlans from "./MyMealPlans";
 import MyGrocery from "./MyGrocery";
 import UserSearch from "./UserSearch";
-import Feed from "./Feed";
+//import Feed from "./Feed";
 import MyEventPlans from "./MyEventPlans";
 import Classes from "./Classes";
 import Scanner from "./Scanner";
@@ -76,7 +76,7 @@ export default function DrawerNavigation() {
           <FontAwesome name="search" size={24} color={color} />
         ),
       }} />
-      <Drawer.Screen name="Feed" component={Feed} options={{
+      {/* <Drawer.Screen name="Feed" component={Feed} options={{
         headerTitle: "Feed",
         drawerActiveBackgroundColor: "#e4efe4",
         drawerActiveTintColor: "#00BE00",
@@ -87,9 +87,9 @@ export default function DrawerNavigation() {
         },
         headerTransparent: true,
         drawerIcon: ({ color }) => (
-          <Ionicons name="calendar-outline" size={24} color={color} />
+          <MaterialCommunityIcons name="post" size={24} color={color} />
         ),
-      }} />
+      }} /> */}
       <Drawer.Screen name="Health Form" component={HealthForm} options={{
         headerTitle: "",
         drawerActiveBackgroundColor: "#e4efe4",
@@ -145,7 +145,7 @@ export default function DrawerNavigation() {
         },
         headerTransparent: false,
         drawerIcon: ({ color }) => (
-          <MaterialIcons name="local-grocery-store" size={24} color={color} />
+          <MaterialCommunityIcons name="google-classroom" size={24} color={color} />
         ),
       }} />
       }
@@ -160,7 +160,7 @@ export default function DrawerNavigation() {
         },
         headerTransparent: false,
         drawerIcon: ({ color }) => (
-          <MaterialIcons name="local-grocery-store" size={24} color={color} />
+          <MaterialCommunityIcons name="food-halal" size={24} color={color} />
         ),
       }} />
       }
@@ -175,7 +175,7 @@ export default function DrawerNavigation() {
         },
         headerTransparent: false,
         drawerIcon: ({ color }) => (
-          <MaterialIcons name="local-grocery-store" size={24} color={color} />
+          <MaterialCommunityIcons name="scan-helper" size={24} color={color} />
         ),
       }} />
       }

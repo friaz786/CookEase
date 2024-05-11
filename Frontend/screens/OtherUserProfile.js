@@ -171,7 +171,7 @@ const OtherUserProfile = ({ route, navigation }) => {
       const amount = 151;
       if (amount > 150) {
         const paymentResponse = await axios.post(
-          `http://192.168.1.140:8080/payments/intents`,
+          `http://172.20.5.193:8080/payments/intents`,
           {
             amount: amount * 100,
           }

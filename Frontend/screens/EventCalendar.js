@@ -44,13 +44,16 @@ const EventCalendar = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity
-        style={styles.backIcon}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="chevron-back" size={30} color="#000" />
-      </TouchableOpacity>
+    <View style={styles.container}>
+     <View style={styles.customHeader}>
+        <TouchableOpacity
+          style={styles.backIcon}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back" size={30} color="#000" />
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: "flex-end" }}></View>
+      </View>
       <Text style={styles.title}>Enter Event Name:</Text>
       <TextInput
         style={styles.input}
@@ -86,27 +89,42 @@ const EventCalendar = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Create Event Plan</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    //justifyContent: "center",
     backgroundColor: "white",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 10,
+    marginTop: '5%',
     color: "#212121",
+    //alignSelf: 'center',
+  },
+  backIcon: {
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
+  },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
   },
   input: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
+    width: "95%",
     borderColor: "white",
     borderWidth: 1,
     padding: 10,
@@ -118,6 +136,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    marginHorizontal: "10%",
+    alignSelf: 'center',
   },
   backButton: {
     alignSelf: "flex-start",

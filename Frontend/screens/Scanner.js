@@ -106,7 +106,7 @@ export default function Scanner({ navigation }) {
     });
   
     try {
-      const response = await fetch('http://192.168.1.65:5000/check', {
+      const response = await fetch('http://172.20.5.193:5000/check', {
         method: 'POST',
         body: formData,
         headers: {

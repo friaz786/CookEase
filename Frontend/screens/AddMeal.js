@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image
 } from "react-native";
 import { useEffect } from "react";
 import { getAuth } from "firebase/auth";
@@ -37,6 +38,7 @@ const AddMeal = ({ route, navigation }) => {
           ingredients: recipe.ingredients,
           steps: recipe.steps,
           calorie: recipe.calorie_count,
+          image_url: recipe.image_url,
           date: date,
           mealType: mealType,
         });
@@ -61,19 +63,27 @@ const AddMeal = ({ route, navigation }) => {
         >
           <Ionicons name="chevron-back" size={30} color="#000" />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "flex-end" }}>
-          <TouchableOpacity
-            onPress={addRecipeToMealPlan}
-            style={styles.headerButton}
-          >
-            <Text style={styles.headerButtonText}>Add</Text>
-          </TouchableOpacity>
-        </View>
+      </View>
+      <View style={{ flex: 1, alignItems: "flex-end" }}>
+        <TouchableOpacity
+          onPress={addRecipeToMealPlan}
+          style={styles.headerButton}
+        >
+          <Text style={styles.headerButtonText}>Add</Text>
+        </TouchableOpacity>
+      </View>
+
+
+      <View style={styles.cardimg}>
+        <Image
+          source={{ uri: recipe.image_url }}  // Ensure you use the correct property name for the URL
+          style={styles.image}  // You might want to define the style for your images
+        />
       </View>
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Recipe Name</Text>
         <Text style={styles.cardContent}>{recipe.name}</Text>
-        <Text style={styles.cardContent}>
+        <Text style={styles.calorie_count}>
           Calorie count: {recipe.calorie_count} cal
         </Text>
       </View>
@@ -94,53 +104,121 @@ const AddMeal = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F7F7F7",
   },
   backIcon: {
-    // Removed absolute positioning to allow natural flow within the flex container
-    zIndex: 10,
-    marginTop: "5%",
-  },
-  customHeader: {
-    flexDirection: "row",
-    alignItems: "center", // Ensure items are vertically centered
-    padding: 20,
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
   },
   headerButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: "white",
-    marginTop: "5%",
+    backgroundColor: "#4CAF50",
+    marginTop: "3%",
+    marginRight: "3%",
   },
   headerButtonText: {
     color: "white",
     fontSize: 16,
   },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
+  },
   card: {
-    backgroundColor: "white",
-    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
     padding: 20,
-    marginHorizontal: 20,
-    marginTop: "4%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    marginHorizontal: 16,
+    marginTop: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
     elevation: 3,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    color: "#4CAF50",
   },
   cardContent: {
     fontSize: 16,
+    marginTop: 8,
+    color: "#666666",
+  },
+  calorie_count: {
+    fontSize: 14,
+    marginTop: 8,
+    color: "#666666",
+    opacity: 0.8,
   },
   listItem: {
     marginTop: 8,
   },
   listItemText: {
     fontSize: 16,
+    color: "#666",
+  },
+  timerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginVertical: 20,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    marginHorizontal: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  timerInput: {
+    borderWidth: 1,
+    borderColor: "#cccccc",
+    borderRadius: 5,
+    padding: 10,
+    width: "25%",
+    textAlign: "center",
+    backgroundColor: "#F5F5F5",
+  },
+  timerButton: {
+    backgroundColor: "#4CAF50",
+    padding: 10,
+    borderRadius: 5,
+  },
+  timerButtonText: {
+    color: "#ffffff",
+    fontWeight: "bold",
+  },
+  image: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    alignItems: 'center',
+    justifycontent: 'center',
+    backgroundColor: "white",
+    height: 300,
   },
 });
 

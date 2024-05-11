@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/Ionicons';  // Assuming you're using Ionicons
+import { Ionicons } from "@expo/vector-icons";
 
 
 const DailyCoMeeting = ({ navigation, route }) => {
@@ -9,11 +10,15 @@ const DailyCoMeeting = ({ navigation, route }) => {
   
     return (
       <View style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={30} color="#000" style={styles.backIcon} />
-          </TouchableOpacity>
-        </View>
+     <View style={styles.customHeader}>
+        <TouchableOpacity
+          style={styles.backIcon}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back" size={30} color="#000" />
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: "flex-end" }}></View>
+      </View>
         <WebView
           style={{ flex: 1 }}
           source={{ uri: meetingUrl }}
@@ -32,8 +37,19 @@ const DailyCoMeeting = ({ navigation, route }) => {
       zIndex: 10 // Ensure the header is above the WebView
     },
     backIcon: {
-      // Additional styling if needed
-    }
+      padding: 10,
+      marginTop: 20,
+      marginLeft: 1,
+    },
+    customHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: "#E0E0E0",
+      backgroundColor: "#4CAF50",
+    },
   });
   
   export default DailyCoMeeting;

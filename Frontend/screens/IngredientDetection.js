@@ -106,7 +106,7 @@ export default function IngredientDetection({ navigation, route }) {
     });
   
     try {
-      const response = await fetch('http://192.168.1.65:5000/detect_fruits_vegetables', {
+      const response = await fetch('http://172.20.5.193:5000/detect_fruits_vegetables', {
         method: 'POST',
         body: formData,
         headers: {

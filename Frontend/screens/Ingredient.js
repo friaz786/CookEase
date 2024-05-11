@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
+import { db } from "../firebase"; // Ensure this is correctly setting up Firestore.
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
 
 const Ingredient = ({ route, navigation }) => {
   const { ingredients } = route.params;
@@ -12,9 +14,42 @@ const Ingredient = ({ route, navigation }) => {
     setIngredientList(newIngredients);
   };
 
+  const fetchRecipes = async (ingredients) => {
+    const recipesRef = collection(db, 'recipe');
+    const q = query(
+      recipesRef,
+      where('cleanIngredient', 'array-contains-any', ingredients.slice(0, 10)), // Firestore allows up to 10 items in 'array-contains-any'
+      limit(50) // You might want to adjust the limit based on expected data volume
+    );
+  
+    const querySnapshot = await getDocs(q);
+    const allRecipes = querySnapshot.docs.map(doc => doc.data());
+  
+    // Filter recipes to include only those that have all the specified ingredients
+    const filteredRecipes = allRecipes.filter(recipe =>
+      ingredients.every(ingredient => recipe.cleanIngredient.includes(ingredient))
+    );
+  
+    if (filteredRecipes.length === 0) {
+      console.log('No matching recipes found.');
+      return [];
+    }
+    return filteredRecipes;
+  };
+  
+
+
+  const findRecipes = async () => {
+    try {
+      const recipes = await fetchRecipes(ingredientList);
+      navigation.navigate('RecipeResults', { recipes });
+    } catch (error) {
+      console.error("Failed to fetch recipes:", error);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              {/* Back Icon */}
       <TouchableOpacity
         style={styles.backIcon}
         onPress={() => navigation.goBack()}
@@ -33,9 +68,17 @@ const Ingredient = ({ route, navigation }) => {
           </View>
         )}
       />
+      <TouchableOpacity
+        style={styles.showRecipesButton}
+        onPress={findRecipes}
+      >
+        <Text style={styles.showRecipesButtonText}>Show Recipes</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   ingredientItem: {
@@ -52,6 +95,22 @@ const styles = StyleSheet.create({
   removeIcon: {
     fontSize: 24,
     color: 'red',
+  },
+  showRecipesButton: {
+    backgroundColor: '#4CAF50', // Green background for the button
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  showRecipesButtonText: {
+    color: 'white', // White text color
+    fontSize: 16,
+  },
+  backIcon: {
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
   },
 });
 

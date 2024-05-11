@@ -10,8 +10,15 @@ import {
 } from "react-native";
 import { db } from "../firebase";
 import { getAuth } from "firebase/auth";
-import { doc, collection, getDocs, deleteDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 
 const Meeting = ({ navigation }) => {
   const [meetings, setMeetings] = useState([]);
@@ -25,7 +32,10 @@ const Meeting = ({ navigation }) => {
       const fetchedMeetings = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         // Check if meetingDate exists and is a Firestore Timestamp
-        const meetingDate = data.meetingDate && data.meetingDate.toDate ? data.meetingDate.toDate() : null;
+        const meetingDate =
+          data.meetingDate && data.meetingDate.toDate
+            ? data.meetingDate.toDate()
+            : null;
         return {
           id: doc.id,
           ...data,
@@ -34,11 +44,9 @@ const Meeting = ({ navigation }) => {
       });
       setMeetings(fetchedMeetings);
     };
-    
-  
+
     fetchMeetings();
   }, [userId, meetings]); // Depend on userId to refetch if it changes
-  
 
   const handleDeleteMeeting = async (meetingId) => {
     Alert.alert(
@@ -50,7 +58,13 @@ const Meeting = ({ navigation }) => {
           text: "Delete",
           onPress: async () => {
             // Adjusted to directly point to the 'meeting' collection and the specific user's sub-collection
-            const meetingDocRef = doc(db, "meeting", userId, "meetings", meetingId);
+            const meetingDocRef = doc(
+              db,
+              "meeting",
+              userId,
+              "meetings",
+              meetingId
+            );
             await deleteDoc(meetingDocRef);
             setMeetings(meetings.filter((meeting) => meeting.id !== meetingId));
             Alert.alert("Deleted", "Meeting has been deleted successfully");
@@ -60,49 +74,47 @@ const Meeting = ({ navigation }) => {
     );
   };
 
- 
+  const updateMeetingStatus = async (meetingId, hostId) => {
+    const meetingDocRef = doc(db, "meeting", userId, "meetings", meetingId);
+    try {
+      await updateDoc(meetingDocRef, {
+        status: "started",
+      });
+      console.log("Meeting status updated to started.");
+    } catch (error) {
+      console.error("Error updating meeting status: ", error);
+      Alert.alert("Error", "Failed to update meeting status.");
+    }
+  };
 
-const updateMeetingStatus = async (meetingId, hostId) => {
-  const meetingDocRef = doc(db, "meeting", userId, "meetings", meetingId);
-  try {
-    await updateDoc(meetingDocRef, {
-      status: 'started'
-    });
-    console.log("Meeting status updated to started.");
-  } catch (error) {
-    console.error("Error updating meeting status: ", error);
-    Alert.alert("Error", "Failed to update meeting status.");
-  }
-};
-
-
-const handleMeetingLinkPress = (item) => {
-  Alert.alert(
-    "Start Meeting",
-    "Do you want to start this meeting now?",
-    [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      {
-        text: "Yes",
-        onPress: async () => {
-          await updateMeetingStatus(item.id, item.hostId);
-          navigation.navigate('DailyCoMeeting', { meetingUrl: item.meetingLink});
-        }
-      }
-    ],
-    { cancelable: false }
-  );
-};
-
-  
-  
+  const handleMeetingLinkPress = (item) => {
+    Alert.alert(
+      "Start Meeting",
+      "Do you want to start this meeting now?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            await updateMeetingStatus(item.id, item.hostId);
+            navigation.navigate("DailyCoMeeting", {
+              meetingUrl: item.meetingLink,
+            });
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   const renderMeetingItem = ({ item }) => {
-    const meetingDate = item.meetingDate ? item.meetingDate.toLocaleDateString("en-US") : 'Date not set';
-    const meetingTime = item.meetingTime
+    const meetingDate = item.meetingDate
+      ? item.meetingDate.toLocaleDateString("en-US")
+      : "Date not set";
+    const meetingTime = item.meetingTime;
 
     return (
       <View style={styles.meetingItem}>
@@ -124,12 +136,14 @@ const handleMeetingLinkPress = (item) => {
   return (
     <View style={styles.container}>
       {/* Back Icon */}
-      <TouchableOpacity
-        style={styles.backIcon}
-        onPress={() => navigation.goBack()}
-      >
-        <Icon name="arrow-back" size={30} color="#000" />
-      </TouchableOpacity>
+      <View style={styles.customHeader}>
+        <TouchableOpacity
+          style={styles.backIcon}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back" size={30} color="#000" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.containertwo}>
         <TouchableOpacity
           style={styles.meetingDetailButton}
@@ -151,8 +165,21 @@ const handleMeetingLinkPress = (item) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#f5f5f5", // Light grey background for better contrast
+  },
+  backIcon: {
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 1,
+  },
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#4CAF50",
   },
 
   meetingItem: {
@@ -162,13 +189,16 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
     marginVertical: 5,
-    backgroundColor: "#fff", // White background for each meeting item
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    marginHorizontal: '2%',
   },
   meetingInfo: {
     flex: 1,
@@ -182,18 +212,27 @@ const styles = StyleSheet.create({
   meetingLinkText: {
     color: "#007AFF", // iOS link color for consistency
     fontSize: 16, // Match font size with the title
+    
   },
   meetingDetailButton: {
-    marginTop: "27%",
+    marginTop: "3%",
+    marginRight: "3%",
     flexDirection: "row",
     backgroundColor: "#4CAF50",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 5,
     alignItems: "center",
     marginBottom: 20, // Add some space above the list
     width: "60%",
-    marginLeft: "40%",
+    marginLeft: "37%",
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    alignItems: "center",
+    justifyContent: 'center',
   },
   buttonText: {
     color: "#fff",
@@ -202,6 +241,7 @@ const styles = StyleSheet.create({
     // Continuing from previous styles
     fontWeight: "bold", // Make button text bold for better readability
     fontSize: 16, // Increase font size for better visibility
+    alignSelf: 'center',
   },
   // Style for the delete icon to provide visual feedback on touch
   deleteIcon: {
@@ -225,13 +265,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingBottom: 10, // Space between the header and the first item
     textAlign: "center", // Center-align the text
-  },
-  backIcon: {
-    position: "absolute",
-    marginTop: "10%",
-    top: 35, // Adjust top and left as per the design requirements
-    left: 10,
-    zIndex: 10, // Make sure the touchable opacity appears above other elements
   },
 });
 

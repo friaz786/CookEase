@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  Image,
 } from "react-native";
 import { getAuth } from "firebase/auth";
 import {
@@ -146,13 +147,6 @@ const styles = StyleSheet.create({
     color: "black",
     textAlign: "center",
   },
-  mealPlanItem: {
-    padding: 10,
-    marginVertical: 8,
-    backgroundColor: "green",
-    borderRadius: 5,
-    marginTop: "2%",
-  },
   mealPlanText: {
     fontSize: 16,
   },
@@ -160,15 +154,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 10,
     marginVertical: 8,
-    backgroundColor: "lightgrey",
-    borderRadius: 10,
     marginTop: "2%",
-    shadowColor: "black",
-    shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    padding: 20,
+    //marginHorizontal: 16,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   deleteButton: {
     marginLeft: 10,

@@ -55,7 +55,7 @@ const Classes = ({navigation, route}) => {
     try {
         const amount = 151; // Set the amount for payment
         // Replace the URL with your actual backend endpoint
-        const paymentResponse = await axios.post(`http://192.168.1.65:8080/payments/intents`, { amount: amount * 100 });
+        const paymentResponse = await axios.post(`http://172.20.5.193:8080/payments/intents`, { amount: amount * 100 });
   
         if (paymentResponse.status === 400) {
           Alert.alert("Payment Error", "Something went wrong with your payment");

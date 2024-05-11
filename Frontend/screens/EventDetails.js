@@ -101,18 +101,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   card: {
-    backgroundColor: "lightgrey", // Light grey background for the card
-    borderRadius: 8, // Rounded corners for the card
-    padding: 10, // Padding inside the card
-    marginBottom: 10, // Space between cards
-    shadowColor: "black", // Shadow color
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: "2%",
+    marginTop: "2%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    padding: 15,
+    shadowColor: "#4CAF50",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cardText: {
     fontSize: 18,

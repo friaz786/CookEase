@@ -45,11 +45,12 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import UploadBlog from "./screens/UploadBlog";
 import EventRecipe from "./screens/EventRecipe";
 import GroceryStores from "./screens/GroceryStores";
-import RecipeHome from "./screens/RecipeHome";
+//import RecipeHome from "./screens/RecipeHome";
 import LiveStreamHost from "./screens/LiveStreamHost";
 import LiveStreamViewer from "./screens/LiveStreamViewer";
 import DailyCoMeeting from "./screens/DailyCoMeeting";
 import Ingredient from "./screens/Ingredient";
+import RecipeResults from "./screens/RecipeResults";
 
 const Stack = createNativeStackNavigator();
 
@@ -334,13 +335,6 @@ export default function App() {
             }}
           />
           <Stack.Screen
-            name="RecipeHome"
-            component={RecipeHome}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
             name="LiveStreamHost"
             component={LiveStreamHost}
             options={{
@@ -354,23 +348,30 @@ export default function App() {
               headerShown: false,
             }}
           />
-                    <Stack.Screen
+          <Stack.Screen
             name="DailyCoMeeting"
             component={DailyCoMeeting}
             options={{
               headerShown: false,
             }}
           />
-                              <Stack.Screen
+          <Stack.Screen
             name="Ingredient"
             component={Ingredient}
             options={{
               headerShown: false,
             }}
           />
-          
+          <Stack.Screen
+            name="RecipeResults"
+            component={RecipeResults}
+            options={{
+              headerShown: false,
+            }}
+          />
+
         </Stack.Navigator>
-        
+
       </StripeProvider>
     </NavigationContainer>
   );

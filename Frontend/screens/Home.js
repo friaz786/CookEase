@@ -22,6 +22,9 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  orderBy,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Ionicons } from "@expo/vector-icons";
@@ -32,12 +35,49 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 const Home = ({ navigation, route }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState(posts.comments || []);
-  const [comment, setComment] = useState("");
-  const [isFollowingAnyone, setIsFollowingAnyone] = useState(true);
+  const [recipesH, setRecipesH] = useState([]);
+  const [lastVisible, setLastVisible] = useState(null);
+  const [loading, setLoading] = useState(false);
   const auth = getAuth();
   const currentUser = auth.currentUser;
+
+  useEffect(() => {
+    fetchInitialRecipes();
+  }, []);
+
+  const fetchInitialRecipes = async () => {
+    setLoading(true);
+    const q = query(collection(db, "recipe"), orderBy("name_lower"), limit(4));
+    const querySnapshot = await getDocs(q);
+    const fetchedRecipes = [];
+    querySnapshot.forEach(doc => {
+      fetchedRecipes.push({ id: doc.id, ...doc.data() });
+    });
+    setRecipesH(fetchedRecipes);
+    setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    setLoading(false);
+  };
+
+  const fetchMoreRecipes = async () => {
+    if (loading || !lastVisible) return;
+
+    setLoading(true);
+    const q = query(
+      //collection(db, "recipes"),
+      collection(db, "recipe"),
+      orderBy("name_lower"),
+      startAfter(lastVisible),
+      limit(4)
+    );
+    const querySnapshot = await getDocs(q);
+    const fetchedRecipes = [];
+    querySnapshot.forEach(doc => {
+      fetchedRecipes.push({ id: doc.id, ...doc.data() });
+    });
+    setRecipesH([...recipesH, ...fetchedRecipes]);
+    setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    setLoading(false);
+  };
 
   // Sugary ingredients array
   const sugaryIngredients = [
@@ -131,18 +171,18 @@ const Home = ({ navigation, route }) => {
             {
               text: "Proceed Anyway",
               onPress: () =>
-                navigation.navigate("RecipeHome", {
+                navigation.navigate("Recipe", {
                   recipe,
                 }),
             },
           ]);
         } else {
           // Safe to proceed if no alerts
-          navigation.navigate("RecipeHome", { recipe });
+          navigation.navigate("Recipe", { recipe });
         }
       } else {
         // No healthData found, proceed
-        navigation.navigate("RecipeHome", { recipe });
+        navigation.navigate("Recipe", { recipe });
       }
     } catch (error) {
       console.error("Error checking health data: ");
@@ -150,113 +190,9 @@ const Home = ({ navigation, route }) => {
     }
   };
 
-  // useEffect(() => {
-  //   // Assuming 'users' collection has a 'following' field as an array of userIds the current user follows
-  //   const userRef = doc(db, 'users', currentUser.uid);
-  //   getDoc(userRef).then((docSnap) => {
-  //     if (docSnap.exists()) {
-  //       const following = docSnap.data().following;
-  //       // Now, fetch posts from those users
-  //       const postsRef = query(collection(db, 'posts'), where('userID', 'in', following));
-  //       onSnapshot(postsRef, (snapshot) => {
-  //         const postsData = snapshot.docs.map(doc => ({
-  //           id: doc.id,
-  //           ...doc.data(),
-  //         }));
-  //         setPosts(postsData);
-  //       });
-  //     }
-  //   });
-  // }, [posts]);
-
-  // const likePost = async (postId) => {
-  //   const postRef = doc(db, 'posts', postId);
-  //   await updateDoc(postRef, {
-  //     likes: arrayUnion(currentUser.uid),
-  //   });
-  // };
-
-  // const unlikePost = async (postId) => {
-  //   const postRef = doc(db, 'posts', postId);
-  //   await updateDoc(postRef, {
-  //     likes: arrayRemove(currentUser.uid),
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   const fetchComments = async (postId) => {
-  //     const postRef = doc(db, 'posts', postId);
-  //     const docSnap = await getDoc(postRef);
-
-  //     if (docSnap.exists()) {
-  //       const postData = docSnap.data();
-  //       if (postData.comments) {
-  //         setComments(postData.comments); // Assuming 'comments' is an array field in your post document
-  //       }
-  //     } else {
-  //       console.log("No such document!");
-  //     }
-  //   };
-
-  //   fetchComments();
-  // }, [posts.id]); // Dependency on post.id to refetch if the post changes
-
-  // useEffect(() => {
-  //   const userRef = doc(db, 'users', currentUser.uid);
-  //   getDoc(userRef).then((docSnap) => {
-  //     if (docSnap.exists()) {
-  //       const following = docSnap.data().following;
-  //       setIsFollowingAnyone(following.length > 0); // Update based on the length of the following array
-  //       if (following.length > 0) {
-  //         const postsRef = query(collection(db, 'posts'), where('userID', 'in', following));
-  //         onSnapshot(postsRef, (snapshot) => {
-  //           const postsData = snapshot.docs.map(doc => ({
-  //             id: doc.id,
-  //             ...doc.data(),
-  //           }));
-  //           setPosts(postsData);
-  //         });
-  //       }
-  //     }
-  //   });
-  // }, [posts, isFollowingAnyone]);
-
-  // const renderPost = ({ item }) => {
-  //   const postLikes = item.likes || [];
-  //   const isLiked = postLikes.includes(currentUser.uid);
-  //   //const isLiked = item.likes.includes(currentUser.uid);
-  //   return (
-  //     <View style={{ margin: 10 }}>
-  //       <Text>{item.caption}</Text>
-  //       {
-  //         item.image && (item.image.endsWith('.mp4') || item.image.endsWith('.mov')) ? (
-  //           <Video
-  //             source={{ uri: item.image }}
-  //             style={{ width: '100%', height: 300 }}
-  //             useNativeControls
-  //             resizeMode="contain"
-  //           />
-  //         ) : (
-  //           <Image source={{ uri: item.image }} style={{ width: '100%', height: 300 }} />
-  //         )
-  //       }
-  //       <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
-  //         <TouchableOpacity onPress={() => isLiked ? unlikePost(item.id) : likePost(item.id)}>
-  //           <Icon name={isLiked ? 'heart' : 'heart-outline'} size={25} color="red" />
-  //         </TouchableOpacity>
-  //         <Text>{item.likes.length} likes</Text>
-  //         {/* Add Comment Icon and functionality here */}
-  //       </View>
-  {
-    /* Render Comments */
-  }
-
-  //      </View>
-  //   );
-  // };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Simplify Your Cooking Journey...</Text>
 
       <TextInput
@@ -265,44 +201,37 @@ const Home = ({ navigation, route }) => {
         value={searchQuery}
         onChangeText={(text) => setSearchQuery(text)}
       />
+    {recipes.length > 0 && (
+      <View style={styles.searchOverlay}>
+        <FlatList
+          data={recipes}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => checkHealthConcernsAndNavigate(item)}
+            >
+              <Text style={styles.recipeItem}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+      )}
       <FlatList
-        data={recipes}
-        keyExtractor={(item) => item.id}
+        data={recipesH}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => checkHealthConcernsAndNavigate(item)}
-          >
-            <Text style={styles.recipeItem}>{item.name}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Recipe", { recipe: item })}>
+            <View style={styles.recipeItemH}>
+              <Image source={{ uri: item.image_url }} style={styles.image} />
+              <Text style={styles.recipeName}>{item.name}</Text>
+            </View>
           </TouchableOpacity>
         )}
+        onEndReached={fetchMoreRecipes}
+        onEndReachedThreshold={0.5}
       />
-      {/* <View style={{ flex: 12, width: '100%', }}>
-        {isFollowingAnyone ? (
-          posts.length > 0 ? (
-            <FlatList
-              data={posts}
-              renderItem={renderPost}
-              keyExtractor={(item) => item.id}
-            />
-          ) : (
-            // User is following others, but there are no posts
-            <View style={styles.center}>
-              <Text style={{ color: 'grey', marginTop: 10 }}>
-                No posts available
-              </Text>
-            </View>
-          )
-        ) : (
-          // User is not following anyone
-          <View style={styles.center}>
-            <MaterialCommunityIcons name="home-outline" size={50} color="grey" />
-            <Text style={{ color: 'grey', marginTop: 10 }}>
-              Follow users to see their posts
-            </Text>
-          </View>
-        )}
-      </View> */}
-    </View>
+
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
@@ -310,7 +239,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#FFFFFF", // Use a light background for the whole screen
-    padding: 20,
+    //padding: 20,
   },
   center: {
     flex: 1,
@@ -334,7 +263,7 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
+    width: "95%",
     borderColor: "white",
     borderWidth: 1,
     padding: 10,
@@ -345,6 +274,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    alignSelf: "center",
   },
   recipeItem: {
     padding: 15, // Increased padding for more space inside the boxes
@@ -368,6 +298,48 @@ const styles = StyleSheet.create({
   recipe: {
     borderRadius: 20, // More pronounced rounded corners
   },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+  },
+  recipeName: {
+    flex: 1,
+    alignSelf: "left",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 10,
+    paddingTop: 10,
+  },
+
+  recipeItemH: {
+    paddingBottom: 15, // Increased padding for more space inside the boxes
+    marginTop: 10, // Add more space between items
+    backgroundColor: "#f9f9f9",
+    borderWidth: 1, // Removing border as the background color is enough contrast
+    borderRadius: 10,
+    borderColor: "#f9f9f9", // More pronounced rounded corners
+    color: "black",
+    fontSize: 18,
+
+    shadowColor: "#000", // Shadow for iOS
+    shadowOffset: {
+      width: 10,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.6,
+    elevation: 4, // Elevation for Android
+  },
+  searchOverlay: {
+    position: 'absolute',
+    top: 210,
+    width: '100%',
+    backgroundColor: 'white',
+    zIndex: 1000,
+    opacity: 0.9,
+  },
+
 });
 
 export default Home;
